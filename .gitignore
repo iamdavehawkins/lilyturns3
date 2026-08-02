@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+images/originals/
+README.md
+Code.gs
+appsscript.json

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lily Turns 3!</title>
+
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="99efd3af-3c2e-490e-adc0-aa7a12c5f68a"></script>
+
+    <style>
+
+        :root {
+            --bg:      #fbf7f0;
+            --panel:   #ffffff;
+            --ink:     #2b2b2b;
+            --muted:   #8a8175;
+            --accent:  #ff69b4;
+            --accent-2:#9370db;
+            --border:  #e6e0d6;
+            --ok-bg:   #eaf6ec;
+            --ok-ink:  #2f7a3d;
+            --warn-bg: #fdf3d8;
+            --warn-ink:#8a6d1f;
+            --err-bg:  #fbe9e9;
+            --err-ink: #9a2f2f;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+
+        header { margin-bottom: 30px; text-align: center; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; color: var(--accent); }
+        h2 { font-size: 1.6em; color: var(--accent-2); margin-top: 0; }
+        .header-image img {
+            max-width: 320px; width: 100%; height: auto;
+            border-radius: 8px; margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        .panel {
+            background-color: var(--panel);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .photo-item { overflow: hidden; border-radius: 8px; border: 1px solid var(--border); }
+
+        .photo-item img {
+            width: 100%; display: block;
+            aspect-ratio: 4 / 3; object-fit: cover; object-position: center 32%;
+            transition: transform 0.3s ease;
+        }
+        .photo-item img:hover { transform: scale(1.05); }
+
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select {
+            width: 100%; padding: 10px;
+            border: 1px solid var(--border); border-radius: 5px;
+            font-family: 'Courier New', monospace; font-size: 1em;
+            background: #fff; color: var(--ink);
+        }
+        button {
+            background-color: var(--accent);
+            color: #fff; border: none; padding: 12px; border-radius: 5px;
+            cursor: pointer; font-family: 'Courier New', monospace;
+            font-weight: bold; font-size: 1em; transition: background-color 0.2s, opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-link {
+            background: none; border: none; color: var(--accent);
+            padding: 0; font-size: 0.95em; text-decoration: underline;
+            cursor: pointer; width: auto; align-self: flex-start;
+        }
+
+        .banner { padding: 12px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.95em; }
+        .banner.ok   { background: var(--ok-bg);   color: var(--ok-ink); }
+        .banner.warn { background: var(--warn-bg); color: var(--warn-ink); }
+        .banner.err  { background: var(--err-bg);  color: var(--err-ink); }
+        .banner.hidden { display: none; }
+        .banner code { background: rgba(0,0,0,0.05); padding: 1px 5px; border-radius: 3px; word-break: break-all; }
+
+        .form-note { color: var(--muted); font-size: 0.9em; margin: -4px 0 0; }
+
+        .tbd {
+            background: var(--warn-bg); color: var(--warn-ink);
+            padding: 1px 7px; border-radius: 4px;
+            font-size: 0.85em; font-weight: bold; letter-spacing: 0.04em;
+        }
+        .details-pending {
+            margin: 16px 0 0; padding-top: 14px;
+            border-top: 1px dashed var(--border);
+            color: var(--muted); font-size: 0.92em;
+        }
+
+        .count-row { display: flex; gap: 15px; }
+        .count-row > div { flex: 1; }
+        @media (max-width: 420px) { .count-row { flex-direction: column; } }
+
+        .lookup { border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 4px; }
+        .lookup .row { display: flex; gap: 10px; }
+        .lookup .row input { flex: 1; }
+        .lookup .row button { width: auto; padding: 10px 16px; }
+        .lookup.hidden { display: none; }
+
+        .location iframe { width: 100%; border: 0; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.06); }
+
+        footer {
+            margin-top: 50px; text-align: center; color: var(--muted);
+            font-size: 0.9em; padding: 20px 0; border-top: 1px solid var(--border);
+        }
+        footer a { color: var(--muted); text-decoration: none; }
+</style>
+</head>
+<body>
+    <div class="container">
+
+        <header>
+            <h1>Lily Turns 3!</h1>
+            <p>Please join us for a party at City Park</p>
+            <div class="header-image">
+                <img src="images/hero.jpg" width="1800" height="1193"
+                     alt="Lily outdoors at golden hour, hair blowing across her face">
+            </div>
+        </header>
+
+        <div class="panel">
+            <h2>Party Details</h2>
+            <p><strong>Date:</strong> Saturday, August 22nd, 2026</p>
+
+            <p><strong>Time:</strong> <span class="tbd">TBD</span></p>
+            <p><strong>Location:</strong> City Park, Denver
+
+               (exact spot <span class="tbd">TBD</span>)</p>
+
+            <p><strong>Gifts &amp; food:</strong> <span class="tbd">TBD</span></p>
+
+            <p class="details-pending">
+                We're still locking down the time and the exact spot in the park.
+                <strong>RSVP now anyway.</strong> We'll email everyone who has
+                RSVP'd as soon as the details are set, and this page will always
+                have the latest.
+            </p>
+        </div>
+
+        <div class="panel">
+            <h2>RSVP</h2>
+
+            <div id="banner" class="banner hidden" role="status"></div>
+
+            <form id="rsvpForm" novalidate onsubmit="return false">
+
+                <input type="hidden" id="token" name="token" value="">
+
+                <div>
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name" autocomplete="name" required>
+                </div>
+                <div>
+                    <label for="email">Your Email:</label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                    <p class="form-note">We use this to find your RSVP if you want to change it later.</p>
+                </div>
+                <div>
+                    <label for="attending">Will you be attending?</label>
+                    <select id="attending" name="attending" required>
+                        <option value="">Please select</option>
+                        <option value="yes">Yes, we'll be there!</option>
+                        <option value="no">Sorry, we can't make it</option>
+                        <option value="maybe">Maybe (we'll confirm later)</option>
+                    </select>
+                </div>
+                <div class="count-row">
+                    <div>
+                        <label for="adults">Adults (including you):</label>
+                        <input type="number" id="adults" name="adults" min="0" max="20" value="1">
+                    </div>
+                    <div>
+                        <label for="kids">Kids:</label>
+                        <input type="number" id="kids" name="kids" min="0" max="20" value="0">
+                    </div>
+                </div>
+                <div>
+                    <label for="message">Message (food allergies, etc.):</label>
+                    <textarea id="message" name="message" rows="4"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn">Send RSVP</button>
+
+                <button type="button" id="lookupToggle" class="btn-link">
+                    Already RSVP'd on another device? Find it &rarr;
+                </button>
+                <div id="lookup" class="lookup hidden">
+                    <label for="lookupEmail">Enter the email you used:</label>
+                    <div class="row">
+                        <input type="email" id="lookupEmail" placeholder="you@example.com">
+                        <button type="button" id="lookupBtn">Find</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="photo-grid">
+            <div class="photo-item"><img src="images/photo-1.jpg" loading="lazy"
+                 alt="Lily in Christmas pajamas, laughing and holding up a pink toy"></div>
+            <div class="photo-item"><img src="images/photo-2.jpg" loading="lazy"
+                 alt="Lily in a red shirt beside a lit Christmas tree, holding a gingerbread ornament"></div>
+            <div class="photo-item"><img src="images/photo-3.jpg" loading="lazy"
+                 alt="Lily on a sunny forest trail in a stars-and-stripes tank top"></div>
+            <div class="photo-item"><img src="images/photo-4.jpg" loading="lazy"
+                 alt="Lily and a friend snacking on a bench in a mountain meadow"></div>
+            <div class="photo-item"><img src="images/photo-5.jpg" loading="lazy"
+                 alt="Lily grinning as she plays a keyboard"></div>
+            <div class="photo-item"><img src="images/photo-6.jpg" loading="lazy"
+                 alt="Lily and a friend in helmets, riding in the front of a cargo bike"></div>
+            <div class="photo-item"><img src="images/photo-7.jpg" loading="lazy"
+                 alt="Lily sitting in a cardboard box covered in her own marker drawings"></div>
+        </div>
+
+        <div class="panel location">
+            <h2>Location</h2>
+
+            <iframe
+                src="https://www.google.com/maps/embed?origin=mfe&amp;pb=!1m2!2m1!1sCity+Park+Denver"
+                height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Map of City Park, Denver"></iframe>
+            <p class="form-note">
+                City Park, Denver. We'll pin the exact meeting spot here once it's picked.
+            </p>
+        </div>
+
+        <footer>
+            &copy; <script>document.write(new Date().getFullYear());</script> Dave Hawkins |
+            <a href="https://links.iamdavehawkins.com">links.iamdavehawkins.com</a>
+        </footer>
+    </div>
+
+    <script>
+
+    const API_URL = "https://script.google.com/macros/s/AKfycbwkKML5v_rToA5Pqdllf3VB7wVCw_Q7lbR-Za08MHXa-qzoe31elMt3ABKJ1p212520sA/exec";
+
+    const STORAGE_KEY = "lilyturns3_rsvp_token";
+    const URL_PARAM   = "rsvp";
+
+    const $ = (id) => document.getElementById(id);
+    const form      = $("rsvpForm");
+    const banner    = $("banner");
+    const submitBtn = $("submitBtn");
+
+    function readToken() {
+        const url = new URLSearchParams(location.search).get(URL_PARAM);
+        return url || localStorage.getItem(STORAGE_KEY) || "";
+    }
+    function saveToken(token) {
+        if (!token) return;
+        $("token").value = token;
+        try { localStorage.setItem(STORAGE_KEY, token); } catch (e) {}
+        const u = new URL(location.href);
+        u.searchParams.set(URL_PARAM, token);
+        history.replaceState(null, "", u);
+    }
+
+    function showBanner(kind, html) {
+        banner.className = "banner " + kind;
+        banner.innerHTML = html;
+    }
+    function hideBanner() { banner.className = "banner hidden"; }
+
+    function setEditMode(on) {
+        submitBtn.textContent = on ? "Update RSVP" : "Send RSVP";
+    }
+
+    const numOr = (v, dflt) => (v === "" || v === null || v === undefined ? dflt : v);
+
+    function fillForm(rsvp) {
+        if (!rsvp) return;
+        $("name").value      = rsvp.name      || "";
+        $("email").value     = rsvp.email     || "";
+        $("attending").value = rsvp.attending || "";
+
+        $("adults").value    = numOr(rsvp.adults, 1);
+        $("kids").value      = numOr(rsvp.kids,   0);
+        $("message").value   = rsvp.message   || "";
+        if (rsvp.token) saveToken(rsvp.token);
+    }
+
+    function readForm() {
+        return {
+            token:     $("token").value,
+            name:      $("name").value.trim(),
+            email:     $("email").value.trim(),
+            attending: $("attending").value,
+            adults:    $("adults").value,
+            kids:      $("kids").value,
+            message:   $("message").value.trim(),
+        };
+    }
+
+    async function apiGet(params) {
+        const qs = new URLSearchParams(params).toString();
+        const res = await fetch(API_URL + "?" + qs, { method: "GET" });
+        return res.json();
+    }
+    async function apiPost(data) {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(data),
+        });
+        return res.json();
+    }
+
+    async function loadExisting(token) {
+        try {
+            const out = await apiGet({ token });
+            if (out && out.ok && out.found) {
+                fillForm(out.rsvp);
+                setEditMode(true);
+                showBanner("ok", "We found your RSVP and filled it in below. Change anything and hit <strong>Update RSVP</strong>.");
+            }
+        } catch (e) {
+            console.error("loadExisting failed", e);
+        }
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        hideBanner();
+
+        const data = readForm();
+        if (!data.name || !data.email || !data.attending) {
+            showBanner("err", "Please fill in your name, email, and whether you're attending.");
+            return;
+        }
+        if (!API_URL) {
+            showBanner("warn", "⚙️ Backend not connected yet. Add your Apps Script URL to <code>API_URL</code> in index.html to start saving RSVPs.");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Saving…";
+        try {
+            const out = await apiPost(data);
+            if (out && out.ok) {
+                saveToken(out.token);
+                setEditMode(true);
+                const link = location.origin + location.pathname + "?" + URL_PARAM + "=" + encodeURIComponent(out.token);
+                showBanner("ok",
+                    "🎉 Thanks, " + escapeHtml(data.name) + "! Your RSVP is saved.<br>" +
+                    "You can come back and change it anytime. This page is bookmarked to " +
+                    "your response, or use this link:<br><code>" + escapeHtml(link) + "</code>");
+            } else {
+                showBanner("err", "Hmm, that didn't save: " + escapeHtml((out && out.error) || "unknown error") + ". Please try again.");
+                setEditMode(!!data.token);
+            }
+        } catch (err) {
+            console.error("submit failed", err);
+            showBanner("err", "Couldn't reach the RSVP server. Check your connection and try again.");
+            setEditMode(!!data.token);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    $("lookupToggle").addEventListener("click", () => {
+        $("lookup").classList.toggle("hidden");
+    });
+    $("lookupBtn").addEventListener("click", async () => {
+        const email = $("lookupEmail").value.trim();
+        if (!email) return;
+        if (!API_URL) {
+            showBanner("warn", "⚙️ Backend not connected yet, so lookup is unavailable.");
+            return;
+        }
+        try {
+            const out = await apiGet({ email });
+            if (out && out.ok && out.found) {
+                fillForm(out.rsvp);
+                setEditMode(true);
+                $("lookup").classList.add("hidden");
+                showBanner("ok", "Found it! Your answers are filled in below. Edit and hit <strong>Update RSVP</strong>.");
+            } else {
+                showBanner("warn", "No RSVP found for that email yet. Fill out the form above to create one.");
+            }
+        } catch (e) {
+            console.error("lookup failed", e);
+            showBanner("err", "Lookup failed. Please try again.");
+        }
+    });
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => (
+            { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
+        ));
+    }
+
+    (function init() {
+        if (!API_URL) {
+            showBanner("warn", "⚙️ <strong>Preview mode.</strong> Backend not connected. The form works but won't save. Add your Apps Script URL to <code>API_URL</code> in index.html.");
+        }
+        const token = readToken();
+        if (token) {
+            $("token").value = token;
+            if (API_URL) loadExisting(token);
+        }
+    })();
+</script>
+</body>
+</html>
