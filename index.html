@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lily Turns 3!</title>
+    <!-- Lily's name stays in the tab/link-preview title so a shared link is
+         self-explanatory, even though the on-page heading is the pun. -->
+    <title>Time to Paw-Ty! Lily Turns 3</title>
 
     <script defer src="https://cloud.umami.is/script.js" data-website-id="99efd3af-3c2e-490e-adc0-aa7a12c5f68a"></script>
 
     <style>
 
         /* ------------------------------------------------------------------
-           Gabby's Dollhouse-ish party theme: bubblegum pink, purple, mint and
-           sunshine, with cat-ear and rainbow motifs drawn in CSS. Deliberately
-           evocative rather than official — no show artwork or logos are used.
+           Gabby's Dollhouse party theme: bubblegum pink, purple, mint and
+           sunshine, with cat-ear and rainbow motifs drawn in CSS. Character
+           art in images/cats/ was supplied by Dave; everything else is CSS.
            ------------------------------------------------------------------ */
         :root {
             --bg:      #fff4fa;
@@ -50,20 +52,30 @@
         .container { max-width: 800px; margin: 0 auto; }
 
         header { margin-bottom: 30px; text-align: center; }
+        /* clamp so "Time to Paw-Ty!" can't overflow a narrow screen; at 2.8em
+           fixed it pushed the body into horizontal scroll on phones */
         h1 {
-            font-size: 2.8em; margin-bottom: 6px; color: var(--accent);
+            font-size: clamp(1.6rem, 8.4vw, 2.8em);
+            margin-bottom: 6px; color: var(--accent);
             letter-spacing: 0.02em;
             text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--accent-2);
         }
-        header > p { color: var(--accent-2); font-weight: bold; }
+        header > p {
+            color: var(--accent-2); font-weight: bold;
+            font-size: clamp(0.82rem, 3.6vw, 1rem);
+        }
         h2 {
             font-size: 1.6em; color: var(--accent-2); margin-top: 0;
             display: flex; align-items: center; gap: 8px;
         }
 
         /* hero photo in a frame with cat ears */
-        .header-image { position: relative; display: inline-block; margin: 22px 0 6px; }
-        .header-image img {
+        /* bottom margin leaves room for the cat that hangs below the frame */
+        .header-image { position: relative; display: inline-block; margin: 22px 0 52px; }
+        @media (max-width: 640px) { .header-image { margin-bottom: 6px; } }
+        /* direct child only — the cats live inside .cats and must not inherit
+           the frame's border, radius or shadow */
+        .header-image > img {
             max-width: 320px; width: 100%; height: auto;
             border-radius: 14px; display: block;
             border: 4px solid var(--accent);
@@ -78,6 +90,34 @@
         }
         .header-image::before { left: 16px;  transform: rotate(-14deg); }
         .header-image::after  { right: 16px; transform: rotate(14deg); }
+
+        /* Gabby cats scattered around the photo. They sit outside the frame,
+           so below 640px they reflow into a row underneath instead. */
+        .cats .cat {
+            position: absolute; width: 92px; height: auto;
+            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.18));
+        }
+        .cats .c1 { top: -26px;  left: -78px;  transform: rotate(-12deg); }
+        .cats .c2 { top: 118px;  left: -72px;  transform: rotate(9deg); width: 84px; }
+        .cats .c3 { top: -30px;  right: -76px; transform: rotate(12deg); }
+        .cats .c4 { top: 122px;  right: -74px; transform: rotate(-9deg); width: 84px; }
+        .cats .c5 { bottom: -46px; left: 50%; margin-left: -42px; width: 84px; }
+
+        @media (max-width: 640px) {
+            .cats {
+                display: flex; justify-content: center; align-items: flex-end;
+                gap: 4px; margin-top: 14px; flex-wrap: wrap;
+            }
+            /* min() keeps all five on one row down to ~320px */
+            .cats .cat {
+                position: static; width: min(58px, 16vw); transform: none; margin: 0;
+            }
+        }
+
+        .paw-divider {
+            margin: 10px 0 0; font-size: 1.1rem; letter-spacing: 0.35em;
+            color: var(--accent-2);
+        }
 
         .panel {
             background-color: var(--panel);
@@ -169,7 +209,9 @@
 
         .lookup { border-top: 1px dashed var(--border); padding-top: 14px; margin-top: 4px; }
         .lookup .row { display: flex; gap: 10px; }
-        .lookup .row input { flex: 1; }
+        /* min-width:0 lets the input shrink past its intrinsic width instead of
+           pushing the row wider than the screen */
+        .lookup .row input { flex: 1; min-width: 0; }
         .lookup .row button { width: auto; padding: 10px 16px; }
         .lookup.hidden { display: none; }
 
@@ -186,12 +228,23 @@
     <div class="container">
 
         <header>
-            <h1>Lily Turns 3!</h1>
-            <p>Join us for a birthday party at City Park!</p>
+            <h1>Time to Paw-Ty!</h1>
+            <p>Our a-meow-zing Lily is turning 3!<br>
+               Come help make her birthday cat-tastic.</p>
             <div class="header-image">
                 <img src="images/hero.jpg" width="1800" height="1193"
                      alt="Lily outdoors at golden hour, hair blowing across her face">
+                <!-- decorative: scattered around the photo on wide screens,
+                     reflowed into a row underneath on narrow ones -->
+                <div class="cats" aria-hidden="true">
+                    <img class="cat c1" src="images/cats/pandy.png"     alt="">
+                    <img class="cat c2" src="images/cats/cakey.png"     alt="">
+                    <img class="cat c3" src="images/cats/mercat.png"    alt="">
+                    <img class="cat c4" src="images/cats/catrat.png"    alt="">
+                    <img class="cat c5" src="images/cats/pillowcat.png" alt="">
+                </div>
             </div>
+            <p class="paw-divider" aria-hidden="true">🐾 &middot; 🐾 &middot; 🐾</p>
         </header>
 
         <div class="panel">
@@ -199,7 +252,7 @@
             <p><strong>📅 Date:</strong> Saturday, August 22nd, 2026</p>
             <p><strong>⏰ Time:</strong> 10:00 AM &ndash; 12:00 PM</p>
             <p><strong>📍 Where:</strong> City Park, Denver. We'll be at a shady spot by the
-               H2Odyssey splash pad, just north of the Denver Museum of Nature &amp; Science.</p>
+               splash pad, just west of (behind) the Denver Museum of Nature &amp; Science.</p>
             <p><strong>🩱 Bring:</strong> Swimsuits and towels for the splash pad!</p>
             <p><strong>🍰 Food:</strong> We'll have light snacks and cake.</p>
         </div>
@@ -297,7 +350,7 @@
                 referrerpolicy="no-referrer-when-downgrade"
                 title="Map of the splash pad in City Park, Denver"></iframe>
             <p class="form-note">
-                Look for us in the shade near the splash pad, just north of the museum.
+                Look for us in the shade near the splash pad, just west of the museum.
                 <a href="https://www.google.com/maps/dir/?api=1&amp;destination=39.74742421647246,-104.94430551720556"
                    target="_blank" rel="noopener">Get directions &rarr;</a>
             </p>

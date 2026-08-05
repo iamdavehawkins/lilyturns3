@@ -1,5 +1,5 @@
 <meta charset="UTF-8">
-<title>Lily Turns 3 — printable invites (4 per page)</title>
+<title>Time to Paw-Ty — printable invites (4 per page)</title>
 
 <!--
   Printable paper invite, four to a US Letter sheet (each card 4in x 5.25in).
@@ -63,10 +63,15 @@
     }
     .card > * { position: relative; z-index: 1; }
 
+    /* 22pt keeps "Time to Paw-Ty!" on one line inside the 3.56in text column */
     h1 {
-        font-size: 25pt; margin: 0.04in 0 0; color: var(--accent);
+        font-size: 22pt; margin: 0.04in 0 0; color: var(--accent);
         letter-spacing: 0.01em; line-height: 1.1;
         text-shadow: 1.5px 1.5px 0 #fff, 3px 3px 0 var(--accent-2);
+    }
+    .sub {
+        font-size: 11pt; font-weight: bold; color: var(--accent-2);
+        margin: 0.05in 0 0;
     }
     .kicker {
         font-size: 9pt; color: var(--accent-2); font-weight: bold;
@@ -75,7 +80,8 @@
 
     /* circular photo with cat ears */
     .photo { position: relative; margin: 0.13in 0 0.02in; }
-    .photo img {
+    /* direct child only, so the cats don't inherit the circular pink frame */
+    .photo > img {
         width: 1.12in; height: 1.12in; border-radius: 50%;
         object-fit: cover; object-position: center 28%;
         display: block; border: 3px solid var(--accent);
@@ -89,6 +95,18 @@
     }
     .photo::before { left: 0.13in;  transform: rotate(-28deg); }
     .photo::after  { right: 0.13in; transform: rotate(28deg); }
+
+    /* Gabby cats tucked around the photo */
+    .photo .cat { position: absolute; width: 0.62in; height: auto; }
+    .photo .c1 { top: -0.12in;  left: -0.66in;  transform: rotate(-12deg); }
+    .photo .c2 { top: 0.62in;   left: -0.62in;  width: 0.56in; transform: rotate(10deg); }
+    .photo .c3 { top: -0.14in;  right: -0.66in; transform: rotate(12deg); }
+    .photo .c4 { top: 0.64in;   right: -0.62in; width: 0.56in; transform: rotate(-10deg); }
+
+    .tagline {
+        font-size: 9pt; font-weight: bold; color: var(--accent);
+        margin: 0.11in 0 0;
+    }
 
     .details {
         margin: 0.1in 0 0; font-size: 9.5pt; line-height: 1.45;
@@ -137,17 +155,26 @@
 <template id="card">
     <div class="card">
         <p class="kicker">You're invited!</p>
-        <h1>Lily Turns 3!</h1>
+        <h1>Time to Paw-Ty!</h1>
+        <p class="sub">Our a-meow-zing Lily is turning 3!</p>
 
         <div class="photo">
             <img src="images/hero.jpg" alt="Lily">
+            <span class="cats">
+                <img class="cat c1" src="images/cats/pandy.png"     alt="">
+                <img class="cat c2" src="images/cats/cakey.png"     alt="">
+                <img class="cat c3" src="images/cats/mercat.png"    alt="">
+                <img class="cat c4" src="images/cats/pillowcat.png" alt="">
+            </span>
         </div>
+
+        <p class="tagline">Come help make her birthday cat-tastic!</p>
 
         <div class="details">
             <p><strong>Saturday, August 22nd</strong></p>
             <p>10:00 AM &ndash; 12:00 PM</p>
             <p class="where">City Park, Denver &middot; shady spot by the
-               H2Odyssey splash pad, north of the Nature &amp; Science Museum</p>
+               splash pad, just west of the Nature &amp; Science Museum</p>
             <p class="where">Bring swimsuits &amp; towels for the splash pad!<br>
                Light snacks &amp; cake provided.</p>
         </div>
