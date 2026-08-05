@@ -9,26 +9,39 @@
 
     <style>
 
+        /* ------------------------------------------------------------------
+           Gabby's Dollhouse-ish party theme: bubblegum pink, purple, mint and
+           sunshine, with cat-ear and rainbow motifs drawn in CSS. Deliberately
+           evocative rather than official — no show artwork or logos are used.
+           ------------------------------------------------------------------ */
         :root {
-            --bg:      #fbf7f0;
+            --bg:      #fff4fa;
             --panel:   #ffffff;
-            --ink:     #2b2b2b;
-            --muted:   #8a8175;
-            --accent:  #ff69b4;
-            --accent-2:#9370db;
-            --border:  #e6e0d6;
-            --ok-bg:   #eaf6ec;
-            --ok-ink:  #2f7a3d;
-            --warn-bg: #fdf3d8;
+            --ink:     #3a2d43;
+            --muted:   #8a7d95;
+            --accent:  #ff4fa3;   /* bubblegum pink */
+            --accent-2:#9b5de5;   /* purple         */
+            --mint:    #2ec4b6;
+            --sun:     #ffd23f;
+            --border:  #f4d9ea;
+            --ok-bg:   #e8f8f2;
+            --ok-ink:  #1d7a63;
+            --warn-bg: #fff3d6;
             --warn-ink:#8a6d1f;
-            --err-bg:  #fbe9e9;
-            --err-ink: #9a2f2f;
+            --err-bg:  #ffe9ef;
+            --err-ink: #b32756;
+            --rainbow: linear-gradient(90deg,
+                       #ff4fa3 0%, #ff8fc7 20%, #9b5de5 40%,
+                       #4cc9f0 60%, #2ec4b6 80%, #ffd23f 100%);
         }
 
         * { box-sizing: border-box; }
         body {
             font-family: 'Courier New', monospace;
             background-color: var(--bg);
+            /* soft polka dots */
+            background-image: radial-gradient(var(--border) 1.5px, transparent 1.6px);
+            background-size: 22px 22px;
             color: var(--ink);
             margin: 0;
             padding: 20px;
@@ -37,21 +50,49 @@
         .container { max-width: 800px; margin: 0 auto; }
 
         header { margin-bottom: 30px; text-align: center; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; color: var(--accent); }
-        h2 { font-size: 1.6em; color: var(--accent-2); margin-top: 0; }
+        h1 {
+            font-size: 2.8em; margin-bottom: 6px; color: var(--accent);
+            letter-spacing: 0.02em;
+            text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--accent-2);
+        }
+        header > p { color: var(--accent-2); font-weight: bold; }
+        h2 {
+            font-size: 1.6em; color: var(--accent-2); margin-top: 0;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* hero photo in a frame with cat ears */
+        .header-image { position: relative; display: inline-block; margin: 22px 0 6px; }
         .header-image img {
             max-width: 320px; width: 100%; height: auto;
-            border-radius: 8px; margin: 20px 0;
-            border: 1px solid var(--border);
+            border-radius: 14px; display: block;
+            border: 4px solid var(--accent);
+            box-shadow: 0 6px 0 var(--accent-2);
         }
+        .header-image::before,
+        .header-image::after {
+            content: ""; position: absolute; top: -22px;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid var(--accent);
+        }
+        .header-image::before { left: 16px;  transform: rotate(-14deg); }
+        .header-image::after  { right: 16px; transform: rotate(14deg); }
 
         .panel {
             background-color: var(--panel);
-            padding: 20px;
-            border-radius: 10px;
+            padding: 22px;
+            border-radius: 16px;
             margin-bottom: 30px;
-            border: 1px solid var(--border);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 0 var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        /* rainbow stripe across the top of every card */
+        .panel::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0;
+            height: 6px; background: var(--rainbow);
         }
 
         .photo-grid {
@@ -60,7 +101,18 @@
             gap: 15px;
             margin-bottom: 30px;
         }
-        .photo-item { overflow: hidden; border-radius: 8px; border: 1px solid var(--border); }
+        .photo-item {
+            overflow: hidden; border-radius: 14px;
+            border: 3px solid var(--panel);
+            box-shadow: 0 3px 0 var(--border);
+        }
+        /* rotate through the party colours so the grid reads as a rainbow */
+        .photo-item:nth-child(6n+1) { border-color: var(--accent); }
+        .photo-item:nth-child(6n+2) { border-color: var(--accent-2); }
+        .photo-item:nth-child(6n+3) { border-color: var(--mint); }
+        .photo-item:nth-child(6n+4) { border-color: var(--sun); }
+        .photo-item:nth-child(6n+5) { border-color: #4cc9f0; }
+        .photo-item:nth-child(6n+6) { border-color: #ff8fc7; }
 
         .photo-item img {
             width: 100%; display: block;
@@ -72,25 +124,35 @@
         form { display: flex; flex-direction: column; gap: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, textarea, select {
-            width: 100%; padding: 10px;
-            border: 1px solid var(--border); border-radius: 5px;
+            width: 100%; padding: 11px;
+            border: 2px solid var(--border); border-radius: 10px;
             font-family: 'Courier New', monospace; font-size: 1em;
             background: #fff; color: var(--ink);
         }
+        input:focus, textarea:focus, select:focus {
+            outline: none; border-color: var(--accent-2);
+            box-shadow: 0 0 0 3px rgba(155, 93, 229, 0.18);
+        }
         button {
             background-color: var(--accent);
-            color: #fff; border: none; padding: 12px; border-radius: 5px;
+            color: #fff; border: none; padding: 14px; border-radius: 12px;
             cursor: pointer; font-family: 'Courier New', monospace;
-            font-weight: bold; font-size: 1em; transition: background-color 0.2s, opacity 0.2s;
+            font-weight: bold; font-size: 1.05em; letter-spacing: 0.03em;
+            box-shadow: 0 4px 0 var(--accent-2);
+            transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
         }
-        button:hover { opacity: 0.9; }
+        button:hover { opacity: 0.92; }
+        /* squish down onto its shadow when pressed */
+        button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--accent-2); }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-link {
-            background: none; border: none; color: var(--accent);
+            background: none; border: none; color: var(--accent-2);
             padding: 0; font-size: 0.95em; text-decoration: underline;
             cursor: pointer; width: auto; align-self: flex-start;
+            box-shadow: none; letter-spacing: normal;
         }
+        .btn-link:active { transform: none; box-shadow: none; }
 
         .banner { padding: 12px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.95em; }
         .banner.ok   { background: var(--ok-bg);   color: var(--ok-ink); }
@@ -100,17 +162,6 @@
         .banner code { background: rgba(0,0,0,0.05); padding: 1px 5px; border-radius: 3px; word-break: break-all; }
 
         .form-note { color: var(--muted); font-size: 0.9em; margin: -4px 0 0; }
-
-        .tbd {
-            background: var(--warn-bg); color: var(--warn-ink);
-            padding: 1px 7px; border-radius: 4px;
-            font-size: 0.85em; font-weight: bold; letter-spacing: 0.04em;
-        }
-        .details-pending {
-            margin: 16px 0 0; padding-top: 14px;
-            border-top: 1px dashed var(--border);
-            color: var(--muted); font-size: 0.92em;
-        }
 
         .count-row { display: flex; gap: 15px; }
         .count-row > div { flex: 1; }
@@ -144,26 +195,17 @@
         </header>
 
         <div class="panel">
-            <h2>Party Details</h2>
-            <p><strong>Date:</strong> Saturday, August 22nd, 2026</p>
-
-            <p><strong>Time:</strong> <span class="tbd">TBD</span></p>
-            <p><strong>Location:</strong> City Park, Denver
-
-               (exact spot <span class="tbd">TBD</span>)</p>
-
-            <p><strong>Gifts &amp; food:</strong> <span class="tbd">TBD</span></p>
-
-            <p class="details-pending">
-                We're still working out the time and the exact spot in the park.
-                <strong>You can RSVP now anyway.</strong> We'll email everyone who has
-                RSVP'd as soon as the details are set, and this page will be updated
-                with the latest.
-            </p>
+            <h2><span aria-hidden="true">🎀</span> Party Details</h2>
+            <p><strong>📅 Date:</strong> Saturday, August 22nd, 2026</p>
+            <p><strong>⏰ Time:</strong> 10:00 AM</p>
+            <p><strong>📍 Where:</strong> City Park, Denver. We'll be at a shady spot by the
+               H2Odyssey splash pad, just north of the Denver Museum of Nature &amp; Science.</p>
+            <p><strong>🩱 Bring:</strong> Swimsuits and towels for the splash pad!</p>
+            <p><strong>🍰 Food:</strong> We'll have light snacks and cake.</p>
         </div>
 
         <div class="panel">
-            <h2>RSVP</h2>
+            <h2><span aria-hidden="true">💌</span> RSVP</h2>
 
             <div id="banner" class="banner hidden" role="status"></div>
 
@@ -176,8 +218,13 @@
                     <input type="text" id="name" name="name" autocomplete="name" required>
                 </div>
                 <div>
-                    <label for="email">Your Email:</label>
-                    <input type="email" id="email" name="email" autocomplete="email" required>
+                    <label for="contact">Phone or Email:</label>
+                    <!-- no autocomplete token fits "phone OR email", so leave it
+                         off rather than mis-hint the browser toward one -->
+                    <input type="text" id="contact" name="contact"
+                           placeholder="303-555-0142 or you@example.com" required>
+                    <p class="form-note">Either one works. We use it to reach you about the
+                       party, and to find your RSVP if you want to change it later.</p>
                 </div>
                 <div>
                     <label for="attending">Will you be attending?</label>
@@ -199,6 +246,11 @@
                     </div>
                 </div>
                 <div>
+                    <label for="kidnames">Kids' names:</label>
+                    <input type="text" id="kidnames" name="kidnames"
+                           placeholder="So Lily knows who's coming!">
+                </div>
+                <div>
                     <label for="message">Message (food allergies, etc.):</label>
                     <textarea id="message" name="message" rows="4"></textarea>
                 </div>
@@ -209,9 +261,9 @@
                     Look up existing RSVP &rarr;
                 </button>
                 <div id="lookup" class="lookup hidden">
-                    <label for="lookupEmail">Enter the email you used:</label>
+                    <label for="lookupContact">Enter the phone or email you used:</label>
                     <div class="row">
-                        <input type="email" id="lookupEmail" placeholder="you@example.com">
+                        <input type="text" id="lookupContact" placeholder="303-555-0142 or you@example.com">
                         <button type="button" id="lookupBtn">Find</button>
                     </div>
                 </div>
@@ -236,15 +288,18 @@
         </div>
 
         <div class="panel location">
-            <h2>Location</h2>
+            <h2><span aria-hidden="true">🗺️</span> Location</h2>
 
+            <!-- pinned to the splash pad's exact coordinates -->
             <iframe
-                src="https://www.google.com/maps/embed?origin=mfe&amp;pb=!1m2!2m1!1sCity+Park+Denver"
+                src="https://www.google.com/maps/embed?origin=mfe&amp;pb=!1m3!2m1!1s39.74742421647246,-104.94430551720556!6i17"
                 height="400" style="border:0;" allowfullscreen="" loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
-                title="Map of City Park, Denver"></iframe>
+                title="Map of the splash pad in City Park, Denver"></iframe>
             <p class="form-note">
-                City Park, Denver. We'll pin the exact meeting spot here once it's picked.
+                Look for us in the shade near the splash pad, just north of the museum.
+                <a href="https://www.google.com/maps/dir/?api=1&amp;destination=39.74742421647246,-104.94430551720556"
+                   target="_blank" rel="noopener">Get directions &rarr;</a>
             </p>
         </div>
 
@@ -294,11 +349,12 @@
     function fillForm(rsvp) {
         if (!rsvp) return;
         $("name").value      = rsvp.name      || "";
-        $("email").value     = rsvp.email     || "";
+        $("contact").value   = rsvp.contact   || "";
         $("attending").value = rsvp.attending || "";
 
         $("adults").value    = numOr(rsvp.adults, 1);
         $("kids").value      = numOr(rsvp.kids,   0);
+        $("kidnames").value  = rsvp.kidnames  || "";
         $("message").value   = rsvp.message   || "";
         if (rsvp.token) saveToken(rsvp.token);
     }
@@ -307,10 +363,11 @@
         return {
             token:     $("token").value,
             name:      $("name").value.trim(),
-            email:     $("email").value.trim(),
+            contact:   $("contact").value.trim(),
             attending: $("attending").value,
             adults:    $("adults").value,
             kids:      $("kids").value,
+            kidnames:  $("kidnames").value.trim(),
             message:   $("message").value.trim(),
         };
     }
@@ -347,8 +404,8 @@
         hideBanner();
 
         const data = readForm();
-        if (!data.name || !data.email || !data.attending) {
-            showBanner("err", "Please fill in your name, email, and whether you're attending.");
+        if (!data.name || !data.contact || !data.attending) {
+            showBanner("err", "Please fill in your name, a phone or email, and whether you're attending.");
             return;
         }
         if (!API_URL) {
@@ -385,21 +442,21 @@
         $("lookup").classList.toggle("hidden");
     });
     $("lookupBtn").addEventListener("click", async () => {
-        const email = $("lookupEmail").value.trim();
-        if (!email) return;
+        const contact = $("lookupContact").value.trim();
+        if (!contact) return;
         if (!API_URL) {
             showBanner("warn", "⚙️ Backend not connected yet, so lookup is unavailable.");
             return;
         }
         try {
-            const out = await apiGet({ email });
+            const out = await apiGet({ contact });
             if (out && out.ok && out.found) {
                 fillForm(out.rsvp);
                 setEditMode(true);
                 $("lookup").classList.add("hidden");
                 showBanner("ok", "Found it! Your answers are filled in below. Edit and hit <strong>Update RSVP</strong>.");
             } else {
-                showBanner("warn", "No RSVP found for that email yet. Fill out the form above to create one.");
+                showBanner("warn", "No RSVP found for that phone or email yet. Fill out the form above to create one.");
             }
         } catch (e) {
             console.error("lookup failed", e);
