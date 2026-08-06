@@ -7,3 +7,10 @@ appsscript.json
 
 # Source art for images/cats/*.png (optimized copies are what ship)
 gabby_cats/
+
+# Print artifacts. Untracked because they carry Chelsea's phone number, and
+# anything committed here is served publicly at lilyturns3.iamdavehawkins.com
+# and readable in the public repo. The number goes out on paper only.
+invite.html
+invite.pdf
+invite-single.pdf
