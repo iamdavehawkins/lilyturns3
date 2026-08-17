@@ -194,6 +194,29 @@
         }
         .btn-link:active { transform: none; box-shadow: none; }
 
+        /* Date-change notice. Sits above everything so nobody scrolls past it,
+           and it's loud on purpose: the party moved after invites went out. */
+        .reschedule {
+            background: var(--sun);
+            border: 3px solid var(--accent-2);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin: 0 0 26px;
+            text-align: center;
+            box-shadow: 0 4px 0 var(--accent-2);
+        }
+        .reschedule .headline {
+            margin: 0 0 6px; font-weight: bold;
+            /* purple, not the pink used elsewhere: pink on this yellow is only
+               ~2.3:1 and unreadable in sun on a phone */
+            font-size: clamp(1rem, 4.4vw, 1.25rem); color: var(--accent-2);
+            letter-spacing: 0.02em;
+        }
+        .reschedule p { margin: 0; font-size: 0.95em; }
+        /* the strikethrough carries "this is the old date", so the text stays
+           full-contrast rather than going grey on yellow */
+        .reschedule .old { text-decoration: line-through; }
+
         .banner { padding: 12px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.95em; }
         .banner.ok   { background: var(--ok-bg);   color: var(--ok-ink); }
         .banner.warn { background: var(--warn-bg); color: var(--warn-ink); }
@@ -229,6 +252,13 @@
 <body>
     <div class="container">
 
+        <div class="reschedule" role="status">
+            <p class="headline"><span aria-hidden="true">📅</span> New date! The party has moved.</p>
+            <p>We're now on <strong>Sunday, August 30th</strong>, not
+               <span class="old">Saturday, August 22nd</span>. Same time, same place.</p>
+            <p>Already RSVP'd? Please scroll down and let us know if the new date works.</p>
+        </div>
+
         <header>
             <h1>Time to Paw-Ty!</h1>
             <p>Our a-meow-zing Lily is turning 3!<br>
@@ -251,7 +281,8 @@
 
         <div class="panel">
             <h2><span aria-hidden="true">🎀</span> Party Details</h2>
-            <p><strong>📅 Date:</strong> Saturday, August 22nd, 2026</p>
+            <p><strong>📅 Date:</strong> Sunday, August 30th, 2026
+               <em>(rescheduled from August 22nd)</em></p>
             <p><strong>⏰ Time:</strong> 10:00 AM &ndash; 12:00 PM</p>
             <p><strong>📍 Where:</strong> City Park, Denver. We'll be at a shady spot by the
                splash pad, just west of (behind) the Denver Museum of Nature &amp; Science.</p>
@@ -376,6 +407,13 @@
     const STORAGE_KEY = "lilyturns3_rsvp_token";
     const URL_PARAM   = "rsvp";
 
+    // The party moved from Aug 22 to Aug 30 after invites went out, so every
+    // RSVP taken against the old date is stale. The backend stamps the date a
+    // guest actually answered for in `confirmedFor`; anything that doesn't
+    // match PARTY_DATE gets its yes/no cleared here and has to be re-answered.
+    // Keep this in sync with PARTY_DATE in Code.gs.
+    const PARTY_DATE = "2026-08-30";
+
     const $ = (id) => document.getElementById(id);
     const form      = $("rsvpForm");
     const banner    = $("banner");
@@ -400,17 +438,35 @@
     }
     function hideBanner() { banner.className = "banner hidden"; }
 
-    function setEditMode(on) {
-        submitBtn.textContent = on ? "Update RSVP" : "Send RSVP";
+    function setEditMode(on, needsReconfirm) {
+        submitBtn.textContent = needsReconfirm ? "Confirm for the new date"
+                              : on             ? "Update RSVP"
+                                               : "Send RSVP";
+    }
+
+    // true when this RSVP was made against the old date and still needs a
+    // fresh yes/no for August 30th.
+    //
+    // slice(0, 10) because Sheets likes to turn "2026-08-30" into a real date,
+    // which comes back as "2026-08-30T06:00:00.000Z". Code.gs formats that back
+    // down now, but comparing just the date part means a stray timestamp can't
+    // trap someone in a reconfirm loop.
+    function needsReconfirm(rsvp) {
+        if (!rsvp) return false;
+        return String(rsvp.confirmedFor || "").slice(0, 10) !== PARTY_DATE;
     }
 
     const numOr = (v, dflt) => (v === "" || v === null || v === undefined ? dflt : v);
 
     function fillForm(rsvp) {
         if (!rsvp) return;
+        const stale = needsReconfirm(rsvp);
+
         $("name").value      = rsvp.name      || "";
         $("contact").value   = rsvp.contact   || "";
-        $("attending").value = rsvp.attending || "";
+        // blank the yes/no on a stale RSVP so the guest has to answer again
+        // rather than silently carrying over their August 22nd answer
+        $("attending").value = stale ? "" : (rsvp.attending || "");
 
         $("adults").value    = numOr(rsvp.adults, 1);
         $("kids").value      = numOr(rsvp.kids,   0);
@@ -450,9 +506,12 @@
         try {
             const out = await apiGet({ token });
             if (out && out.ok && out.found) {
+                const stale = needsReconfirm(out.rsvp);
                 fillForm(out.rsvp);
-                setEditMode(true);
-                showBanner("ok", "We found your RSVP and filled it in below. Change anything and hit <strong>Update RSVP</strong>.");
+                setEditMode(true, stale);
+                showBanner(stale ? "warn" : "ok", stale
+                    ? "You RSVP'd for the old date (August 22nd). The party moved to <strong>Sunday, August 30th</strong>, so please pick again below and hit <strong>Confirm for the new date</strong>."
+                    : "We found your RSVP and filled it in below. Change anything and hit <strong>Update RSVP</strong>.");
             }
         } catch (e) {
             console.error("loadExisting failed", e);
@@ -473,26 +532,31 @@
             return;
         }
 
+        // remember whether we were mid-reconfirm, so a failed save restores the
+        // right button label instead of dropping back to "Update RSVP"
+        const wasStale = submitBtn.textContent === "Confirm for the new date";
         submitBtn.disabled = true;
         submitBtn.textContent = "Saving…";
         try {
             const out = await apiPost(data);
             if (out && out.ok) {
                 saveToken(out.token);
-                setEditMode(true);
+                // saved against the new date, so it's a plain edit from here on
+                setEditMode(true, false);
                 const link = location.origin + location.pathname + "?" + URL_PARAM + "=" + encodeURIComponent(out.token);
                 showBanner("ok",
-                    "🎉 Thanks, " + escapeHtml(data.name) + "! Your RSVP is saved.<br>" +
+                    "🎉 Thanks, " + escapeHtml(data.name) + "! You're down for " +
+                    "<strong>Sunday, August 30th</strong>.<br>" +
                     "You can come back and change it anytime. This page is bookmarked to " +
                     "your response, or use this link:<br><code>" + escapeHtml(link) + "</code>");
             } else {
                 showBanner("err", "Hmm, that didn't save: " + escapeHtml((out && out.error) || "unknown error") + ". Please try again.");
-                setEditMode(!!data.token);
+                setEditMode(!!data.token, wasStale);
             }
         } catch (err) {
             console.error("submit failed", err);
             showBanner("err", "Couldn't reach the RSVP server. Check your connection and try again.");
-            setEditMode(!!data.token);
+            setEditMode(!!data.token, wasStale);
         } finally {
             submitBtn.disabled = false;
         }
@@ -511,10 +575,13 @@
         try {
             const out = await apiGet({ contact });
             if (out && out.ok && out.found) {
+                const stale = needsReconfirm(out.rsvp);
                 fillForm(out.rsvp);
-                setEditMode(true);
+                setEditMode(true, stale);
                 $("lookup").classList.add("hidden");
-                showBanner("ok", "Found it! Your answers are filled in below. Edit and hit <strong>Update RSVP</strong>.");
+                showBanner(stale ? "warn" : "ok", stale
+                    ? "Found it, but it's for the old date (August 22nd). The party moved to <strong>Sunday, August 30th</strong>, so please pick again below and hit <strong>Confirm for the new date</strong>."
+                    : "Found it! Your answers are filled in below. Edit and hit <strong>Update RSVP</strong>.");
             } else {
                 showBanner("warn", "No RSVP found for that phone or email yet. Fill out the form above to create one.");
             }
